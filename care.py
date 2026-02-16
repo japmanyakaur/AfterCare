@@ -6,6 +6,10 @@ import time
 mp_pose = mp.solutions.pose
 cap = cv2.VideoCapture(0)
 
+#  Performance Boost
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
 def calculate_angle(a, b, c):
     a = np.array([a.x, a.y])
     b = np.array([b.x, b.y])
@@ -30,8 +34,10 @@ march_stage = None
 
 arm_hold_start = 0
 
-with mp_pose.Pose(min_detection_confidence=0.6,
-                  min_tracking_confidence=0.6) as pose:
+with mp_pose.Pose(
+        model_complexity=0,
+        min_detection_confidence=0.6,
+        min_tracking_confidence=0.6) as pose:
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -47,13 +53,17 @@ with mp_pose.Pose(min_detection_confidence=0.6,
         if results.pose_landmarks:
             lm = results.pose_landmarks.landmark
 
-            # Required landmarks
+            # -------- Landmarks --------
             ls = lm[mp_pose.PoseLandmark.LEFT_SHOULDER]
             rs = lm[mp_pose.PoseLandmark.RIGHT_SHOULDER]
             le = lm[mp_pose.PoseLandmark.LEFT_ELBOW]
             re = lm[mp_pose.PoseLandmark.RIGHT_ELBOW]
             lw = lm[mp_pose.PoseLandmark.LEFT_WRIST]
             rw = lm[mp_pose.PoseLandmark.RIGHT_WRIST]
+
+            lh = lm[mp_pose.PoseLandmark.LEFT_HIP]   # Used internally
+            rh = lm[mp_pose.PoseLandmark.RIGHT_HIP]  # Used internally
+
             lk = lm[mp_pose.PoseLandmark.LEFT_KNEE]
             rk = lm[mp_pose.PoseLandmark.RIGHT_KNEE]
             la = lm[mp_pose.PoseLandmark.LEFT_ANKLE]
@@ -62,7 +72,7 @@ with mp_pose.Pose(min_detection_confidence=0.6,
             def px(p):
                 return int(p.x * w), int(p.y * h)
 
-            # ---------- DRAW CLEAN JOINT POINTS ----------
+            # -------- Draw Clean Joint Points  --------
             joint_points = [ls, rs, le, re, lw, rw, lk, rk, la, ra]
 
             for point in joint_points:
@@ -123,7 +133,7 @@ with mp_pose.Pose(min_detection_confidence=0.6,
                         (20,40), cv2.FONT_HERSHEY_SIMPLEX,
                         0.8, (0,255,0), 2)
 
-            cv2.putText(image, f"Arm Raises Exercise: {arm_reps}",
+            cv2.putText(image, f"Arm Raises: {arm_reps}",
                         (20,80), cv2.FONT_HERSHEY_SIMPLEX,
                         0.8, (255,0,0), 2)
 
