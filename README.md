@@ -1,5 +1,4 @@
-#  AfterCare – AI Recovery Monitor
-
+#  AfterCare – Pose Estimation Functional Monitor
 ##  Overview
 
 **AfterCare** is an AI-powered camera-based recovery monitoring system designed for post-hospital discharge patients.
