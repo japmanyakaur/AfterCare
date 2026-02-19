@@ -96,7 +96,7 @@ These metrics can later be extended into:
 
 - Python  
 - OpenCV  
-- MediaPipe Pose  
+- MediaPipe   
 - NumPy  
 
 ---
